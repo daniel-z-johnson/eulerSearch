@@ -1,0 +1,19 @@
+es:
+    url: http://127.0.0.1
+    port: 9200
+
+---
+spring:
+    profiles: dev
+
+es:
+    index: euler
+    type: problem
+
+---
+spring:
+    profiles: test
+
+es:
+    index: euler
+    type: problem-test
