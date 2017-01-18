@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X PUT http://127.0.0.1:9200/euler-test -d '{ "settings" : { "index" : { "number_of_shards" : 3, "number_of_replicas" : 2 } }, "mappings" : { "problem" : { "dynamic" : "strict", "properties" : { "id" : { "type"  : "integer" }, "title" : { "type" : "text" }, "body" : { "type" : "text" } } } } }'

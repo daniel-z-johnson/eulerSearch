@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test")
 public class EulerApplicationTests {
 
-    private static Logger log = LoggerFactory.getLogger(EulerApplicationTests.class);
+    private static final Logger log = LoggerFactory.getLogger(EulerApplicationTests.class);
 
     @Value("${spring.profiles}")
     private String profile;

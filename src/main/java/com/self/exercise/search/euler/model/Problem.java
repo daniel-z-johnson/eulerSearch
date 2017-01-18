@@ -11,7 +11,15 @@ public class Problem {
     public Problem() {
     }
 
-    public Problem(int id) {}
+    public Problem(int id) {
+        this.id = id;
+    }
+
+    public Problem(int id, String title, String body) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+    }
 
     public int getId() {
         return id;

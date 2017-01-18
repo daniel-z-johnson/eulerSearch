@@ -9,6 +9,11 @@ import java.util.List;
  */
 public interface ProblemDao {
 
+    /**
+     *
+     * @return total number of problems
+     */
+    long numberOfProblems();
 
     /**
      *

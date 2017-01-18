@@ -1,6 +1,7 @@
 package com.self.exercise.search.euler.dao;
 
 import com.self.exercise.search.euler.model.Problem;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.SearchHit;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
-import static org.elasticsearch.common.xcontent.XContentFactory.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ProblemDaoElasticSearch implements ProblemDao {
 
-    private static Logger log = LoggerFactory.getLogger(ProblemDaoElasticSearch.class);
+    private static final Logger log = LoggerFactory.getLogger(ProblemDaoElasticSearch.class);
 
     private String index;
     private String type;
@@ -41,6 +41,15 @@ public class ProblemDaoElasticSearch implements ProblemDao {
 
 
     @Override
+    public long numberOfProblems() {
+        SearchResponse sr = es.prepareSearch(index)
+                .setTypes(type)
+                .get();
+
+        return sr.getHits().totalHits();
+    }
+
+    @Override
     public void save(Problem problem) {
         // create something JSON like from Map<String, Object> for the source
         Map<String, Object> body = new LinkedHashMap<>();
@@ -49,9 +58,10 @@ public class ProblemDaoElasticSearch implements ProblemDao {
         body.put("body", problem.getBody());
 
         // index the problem
-        es.prepareIndex(index, type, String.valueOf(problem.getId()))
+        IndexResponse indexResponse = es.prepareIndex(index, type, String.valueOf(problem.getId()))
                 .setSource(body)
                 .get();
+        es.admin().indices().prepareRefresh(index).execute().actionGet();
     }
 
     @Override
@@ -63,9 +73,9 @@ public class ProblemDaoElasticSearch implements ProblemDao {
     public List<Problem> getAll(int from, int size) {
         SearchResponse sr = es.prepareSearch(index)
                 .setTypes(type)
+                .setQuery(matchAllQuery())
                 .setFrom(from)
                 .setSize(size)
-                .setQuery(matchAllQuery())
                 .addSort(SortBuilders.fieldSort("id"))
                 .get();
         return searchResponseToProblem(sr);
@@ -97,5 +107,14 @@ public class ProblemDaoElasticSearch implements ProblemDao {
            p.setBody(hit.getSource().get("body").toString());
            return p;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return "ProblemDaoElasticSearch{" +
+                "index='" + index + '\'' +
+                ", type='" + type + '\'' +
+                ", es=" + es +
+                '}';
     }
 }
