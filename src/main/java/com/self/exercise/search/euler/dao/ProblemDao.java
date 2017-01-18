@@ -9,6 +9,13 @@ import java.util.List;
  */
 public interface ProblemDao {
 
+
+    /**
+     *
+     * @param problem save the problem
+     */
+    void save(Problem problem);
+
     /**
      * get all problems, order by id
      *
@@ -20,11 +27,11 @@ public interface ProblemDao {
     /**
      *
      *
-     * @param skip - the number of problems to skip
-     * @param max - the maximum of problems to return
+     * @param from - the number of problems to skip
+     * @param size - the maximum of problems to return
      * @return List of problems should be empty list if skip is greater than the number of problems
      */
-    List<Problem> getAll(int skip, int max);
+    List<Problem> getAll(int from, int size);
 
 
     /**
@@ -42,9 +49,9 @@ public interface ProblemDao {
      *
      *
      * @param query - the string query
-     * @param skip - number of problems to skip
-     * @param max - max number of problems to return
+     * @param from - number of problems to skip
+     * @param size - max number of problems to return
      * @return
      */
-    List<Problem> getProlemsByQuery(String query, int skip, int max);
+    List<Problem> getProblemsByQuery(String query, int from, int size);
 }

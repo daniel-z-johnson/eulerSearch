@@ -15,5 +15,5 @@ spring:
     profiles: test
 
 es:
-    index: euler
-    type: problem-test
+    index: euler-test
+    type: problem

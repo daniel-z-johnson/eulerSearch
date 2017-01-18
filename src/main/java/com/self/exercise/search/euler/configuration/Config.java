@@ -26,4 +26,14 @@ public class Config {
                 .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(host), port));
     }
 
+    @Bean(name = "index")
+    public String esIndex(@Value("${es.index}") String index) {
+        return index;
+    }
+
+    @Bean(name = "type")
+    public String esType(@Value("${es.type}") String type) {
+        return type;
+    }
+
 }
