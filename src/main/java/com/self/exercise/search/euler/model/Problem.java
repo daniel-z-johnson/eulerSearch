@@ -46,6 +46,26 @@ public class Problem {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Problem problem = (Problem) o;
+
+        if (id != problem.id) return false;
+        if (title != null ? !title.equals(problem.title) : problem.title != null) return false;
+        return body != null ? body.equals(problem.body) : problem.body == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (body != null ? body.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Problem{" +
                 "id=" + id +
