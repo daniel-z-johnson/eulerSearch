@@ -44,7 +44,7 @@ public class ProblemDaoElasticSearchTest {
     @Before
     public void setUp() throws Exception {
         log.info("Creating test index for testing");
-        URL url = Resources.getResource("elasticsearchSetUpTest/euler.json");
+        URL url = Resources.getResource("elasticsearchSetUp/euler.json");
         String mapping = Resources.toString(url, StandardCharsets.UTF_8);
         log.debug("{}", mapping);
         es.admin().indices().prepareCreate(index).setSource(mapping).execute().actionGet();
@@ -60,6 +60,7 @@ public class ProblemDaoElasticSearchTest {
     public void save() throws Exception {
         long totalProblemsBefore = problemDao.numberOfProblems();
         problemDao.save(new Problem(1, "One Title", "One body"));
+        es.admin().indices().prepareRefresh(index).execute().actionGet();
         long totalProblemsAfter = problemDao.numberOfProblems();
         assertNotEquals("After saving a problem count should change", totalProblemsBefore, totalProblemsAfter);
     }

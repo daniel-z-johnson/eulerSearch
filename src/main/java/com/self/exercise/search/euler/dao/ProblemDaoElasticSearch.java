@@ -61,7 +61,6 @@ public class ProblemDaoElasticSearch implements ProblemDao {
         IndexResponse indexResponse = es.prepareIndex(index, type, String.valueOf(problem.getId()))
                 .setSource(body)
                 .get();
-        es.admin().indices().prepareRefresh(index).execute().actionGet();
     }
 
     @Override
