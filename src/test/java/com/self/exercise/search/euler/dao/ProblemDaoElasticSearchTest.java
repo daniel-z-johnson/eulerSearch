@@ -99,12 +99,20 @@ public class ProblemDaoElasticSearchTest {
 
     @Test
     public void getProblemsByQuery() throws Exception {
-
+        List<Problem> results = problemDao.getProblemsByQuery("prime");
+        assertThat(results, not(empty()));
     }
 
     @Test
-    public void getProblemsByQueryWithLimit() throws Exception {
+    public void getProblemsbyQueryNoReulsts() throws Exception {
+        List<Problem> results = problemDao.getProblemsByQuery("zzyzx");
+        assertThat(results, empty());
+    }
 
+    @Test
+    public void getProblemsByQueryWithFromAndSize() throws Exception {
+        List<Problem> results = problemDao.getProblemsByQuery("prime", 0, 1);
+        assertThat(results, not(empty()));
     }
 
 }
