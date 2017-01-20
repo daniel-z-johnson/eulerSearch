@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by daniel on 1/17/17.
+ * Created by prime23 on 1/17/17.
  */
 @Repository
 public class ProblemDaoElasticSearch implements ProblemDao {
@@ -44,6 +44,8 @@ public class ProblemDaoElasticSearch implements ProblemDao {
     public long numberOfProblems() {
         SearchResponse sr = es.prepareSearch(index)
                 .setTypes(type)
+                .setQuery(matchAllQuery())
+                .setSize(0)
                 .get();
 
         return sr.getHits().totalHits();

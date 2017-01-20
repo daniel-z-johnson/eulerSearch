@@ -10,18 +10,20 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 
 /**
- * Created by daniel on 1/17/17.
+ * Created by prime23 on 1/17/17.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -35,11 +37,22 @@ public class ProblemDaoElasticSearchTest {
     @Autowired
     private TransportClient es;
 
-    @Value("${es.index}")
+    @Autowired
+    @Qualifier("index")
     private String index;
 
-    @Value("${es.type}")
+    @Autowired
+    @Qualifier("type")
     private String type;
+
+    private static final Problem PROBLEM_1 =
+            new Problem(1, "Prime Numbers", "Prime Numbers and the Pythagorean theorem");
+    private static final Problem PROBLEM_2 =
+            new Problem(2, "Euler totient function", "co-primes");
+    private static final Problem PROBLEM_3 =
+            new Problem(3, "Triangle numbers", "Triangle and square");
+    private static final Problem PROBLEM_4 =
+            new Problem(4, "One Title", "One body");
 
     @Before
     public void setUp() throws Exception {
@@ -48,6 +61,10 @@ public class ProblemDaoElasticSearchTest {
         String mapping = Resources.toString(url, StandardCharsets.UTF_8);
         log.debug("{}", mapping);
         es.admin().indices().prepareCreate(index).setSource(mapping).execute().actionGet();
+        problemDao.save(PROBLEM_1);
+        problemDao.save(PROBLEM_2);
+        problemDao.save(PROBLEM_3);
+        es.admin().indices().prepareRefresh(index).execute().actionGet();
     }
 
     @After
@@ -59,7 +76,7 @@ public class ProblemDaoElasticSearchTest {
     @Test
     public void save() throws Exception {
         long totalProblemsBefore = problemDao.numberOfProblems();
-        problemDao.save(new Problem(1, "One Title", "One body"));
+        problemDao.save(PROBLEM_4);
         es.admin().indices().prepareRefresh(index).execute().actionGet();
         long totalProblemsAfter = problemDao.numberOfProblems();
         assertNotEquals("After saving a problem count should change", totalProblemsBefore, totalProblemsAfter);
@@ -67,11 +84,16 @@ public class ProblemDaoElasticSearchTest {
 
     @Test
     public void getAll() throws Exception {
-
+        int numOfResults = problemDao.getAll().size();
+        assertEquals("Three results should have been returned", 3, numOfResults);
     }
 
     @Test
-    public void getAll1() throws Exception {
+    public void getAllWithSizeAndFrom() throws Exception {
+        List<Problem> results = problemDao.getAll(1,2);
+        int numResults = results.size();
+        assertEquals("Only two results should have been returned", 2, numResults);
+        assertThat(results, hasItems(PROBLEM_2, PROBLEM_3));
 
     }
 
@@ -81,7 +103,7 @@ public class ProblemDaoElasticSearchTest {
     }
 
     @Test
-    public void getProblemsByQuery1() throws Exception {
+    public void getProblemsByQueryWithLimit() throws Exception {
 
     }
 
