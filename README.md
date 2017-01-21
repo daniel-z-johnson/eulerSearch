@@ -18,3 +18,11 @@ The goal of this project is to create simple web app that enables searching [pro
       - copy and past the content from src/main/resources/elasticsearchSetUp/euler.json 
       - click send 
       - you should get a '200 Ok' response if everything went right
+      
+      
+####Testing
+1. Use an IDE to run tests or on the command line run the command 'mvn test'
+   - Tests will assume that you have elastic search running on localhost with transport client on port 9200
+   - One way to override with url and port is as follows
+    - -Des.port=9200 to override the port use, replace 9200 with the port you want to use
+    - -Des.url=127.0.0.1 to override the url used, replace 127.0.0.1 with the url you want to use
