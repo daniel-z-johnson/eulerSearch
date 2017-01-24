@@ -1,6 +1,7 @@
-package com.self.exercise.search.euler.dao;
+package com.self.exercise.search.euler.service;
 
 import com.google.common.io.Resources;
+import com.self.exercise.search.euler.dao.ProblemDaoElasticSearchTest;
 import com.self.exercise.search.euler.model.Problem;
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.After;
@@ -23,16 +24,17 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 
 /**
- * Created by prime23 on 1/17/17.
+ * Created by prime23 on 1/23/17.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class ProblemDaoElasticSearchTest {
+public class ProblemServiceElasticSearchTest {
+
     private static final Logger log = LoggerFactory.getLogger(ProblemDaoElasticSearchTest.class);
 
     @Autowired
-    private ProblemDao problemDao;
+    private ProblemService problemService;
 
     @Autowired
     private TransportClient es;
@@ -61,9 +63,9 @@ public class ProblemDaoElasticSearchTest {
         String mapping = Resources.toString(url, StandardCharsets.UTF_8);
         log.debug("{}", mapping);
         es.admin().indices().prepareCreate(index).setSource(mapping).execute().actionGet();
-        problemDao.save(PROBLEM_2);
-        problemDao.save(PROBLEM_1);
-        problemDao.save(PROBLEM_3);
+        problemService.save(PROBLEM_3);
+        problemService.save(PROBLEM_1);
+        problemService.save(PROBLEM_2);
         es.admin().indices().prepareRefresh(index).execute().actionGet();
     }
 
@@ -75,44 +77,37 @@ public class ProblemDaoElasticSearchTest {
 
     @Test
     public void save() throws Exception {
-        long totalProblemsBefore = problemDao.numberOfProblems();
-        problemDao.save(PROBLEM_4);
+        List<Problem> problemsBefore = problemService.getAll();
+        problemService.save(PROBLEM_4);
         es.admin().indices().prepareRefresh(index).execute().actionGet();
-        long totalProblemsAfter = problemDao.numberOfProblems();
-        assertNotEquals("After saving a problem count should change", totalProblemsBefore, totalProblemsAfter);
+        List<Problem> problemsAfter = problemService.getAll();
+        assertNotEquals("Problems returned should have changed after saving a new problem",
+                problemsBefore, problemsAfter);
     }
 
     @Test
     public void getAll() throws Exception {
-        int numOfResults = problemDao.getAll().size();
-        assertEquals("Three results should have been returned", 3, numOfResults);
+        List<Problem> problems = problemService.getAll();
+        assertThat(problems, contains(PROBLEM_1, PROBLEM_2, PROBLEM_3));
     }
 
     @Test
-    public void getAllWithSizeAndFrom() throws Exception {
-        List<Problem> results = problemDao.getAll(1,2);
-        int numResults = results.size();
-        assertEquals("Only two results should have been returned", 2, numResults);
-        assertThat(results, contains(PROBLEM_2, PROBLEM_3));
+    public void getAllWithFromAndSkip() throws Exception {
+        List<Problem> problems = problemService.getAll(1, 2);
+        assertThat(problems, contains(PROBLEM_2, PROBLEM_3));
 
     }
 
     @Test
     public void getProblemsByQuery() throws Exception {
-        List<Problem> results = problemDao.getProblemsByQuery("prime");
-        assertThat(results, not(empty()));
+        List<Problem> problems = problemService.getProblemsByQuery("prime");
+        assertThat(problems, not(empty()));
     }
 
     @Test
-    public void getProblemsByQueryNoResults() throws Exception {
-        List<Problem> results = problemDao.getProblemsByQuery("zzyzx");
-        assertThat(results, empty());
-    }
-
-    @Test
-    public void getProblemsByQueryWithFromAndSize() throws Exception {
-        List<Problem> results = problemDao.getProblemsByQuery("prime", 0, 1);
-        assertThat(results, not(empty()));
+    public void getProblemsBuQueryNoResults() throws Exception {
+        List<Problem> problems = problemService.getProblemsByQuery("zzyzx");
+        assertThat(problems, empty());
     }
 
 }
