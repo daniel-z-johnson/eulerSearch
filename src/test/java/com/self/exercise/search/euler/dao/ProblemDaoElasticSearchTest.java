@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.*;
 @SpringBootTest
 @ActiveProfiles("test")
 public class ProblemDaoElasticSearchTest {
+
     private static final Logger log = LoggerFactory.getLogger(ProblemDaoElasticSearchTest.class);
 
     @Autowired
@@ -113,6 +114,17 @@ public class ProblemDaoElasticSearchTest {
     public void getProblemsByQueryWithFromAndSize() throws Exception {
         List<Problem> results = problemDao.getProblemsByQuery("prime", 0, 1);
         assertThat(results, not(empty()));
+    }
+
+    @Test
+    public void lastProblemNumber() throws Exception {
+        int lastProblem = problemDao.lastProblemNumber();
+        assertEquals("Last problem should have been 3 at this point but was instead " + lastProblem, 3, lastProblem);
+        Problem problem = new Problem(67, "Maximum path sum II", "");
+        problemDao.save(problem);
+        es.admin().indices().prepareRefresh(index).execute().actionGet();
+        lastProblem = problemDao.lastProblemNumber();
+        assertEquals("Last problem should have been 3 at this point but was instead " + lastProblem, 67, lastProblem);
     }
 
 }

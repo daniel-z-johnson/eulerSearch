@@ -59,4 +59,6 @@ public interface ProblemDao {
      * @return
      */
     List<Problem> getProblemsByQuery(String query, int from, int size);
+
+    int lastProblemNumber();
 }

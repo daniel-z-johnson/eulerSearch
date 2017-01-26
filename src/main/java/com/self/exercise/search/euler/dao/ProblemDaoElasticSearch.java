@@ -5,6 +5,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,5 +119,19 @@ public class ProblemDaoElasticSearch implements ProblemDao {
                 ", type='" + type + '\'' +
                 ", es=" + es +
                 '}';
+    }
+
+    @Override
+    public int lastProblemNumber() {
+        SearchResponse sr = es.prepareSearch(index)
+                .setTypes(type)
+                // no reason to have problems returned
+                .setSize(0)
+                .setQuery(matchAllQuery())
+                .addAggregation(AggregationBuilders.max("lastProblem").field("id").missing(0))
+                .get();
+        log.debug("Aggregation results: {}", sr);
+        // TODO find better solution, this isn't good
+        return (int) (double) sr.getAggregations().get("lastProblem").getProperty("value");
     }
 }
