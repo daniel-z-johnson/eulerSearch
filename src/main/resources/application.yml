@@ -2,6 +2,15 @@ es:
     url: localhost
     port: 9300
 
+spring:
+    profiles:
+        active: dev
+euler:
+    problem:
+        url: "https://projecteuler.net/problem="
+        css:
+            body: "div.problem_content"
+
 ---
 spring:
     profiles: dev

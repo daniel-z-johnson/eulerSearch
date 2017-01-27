@@ -61,6 +61,7 @@ public class ProblemDaoElasticSearchTest {
         URL url = Resources.getResource("elasticsearchSetUp/euler.json");
         String mapping = Resources.toString(url, StandardCharsets.UTF_8);
         log.debug("{}", mapping);
+        log.info("Index being used: {}", index);
         es.admin().indices().prepareCreate(index).setSource(mapping).execute().actionGet();
         problemDao.save(PROBLEM_2);
         problemDao.save(PROBLEM_1);

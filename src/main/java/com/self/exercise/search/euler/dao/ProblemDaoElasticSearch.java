@@ -132,6 +132,7 @@ public class ProblemDaoElasticSearch implements ProblemDao {
                 .get();
         log.debug("Aggregation results: {}", sr);
         // TODO find better solution, this isn't good
-        return (int) (double) sr.getAggregations().get("lastProblem").getProperty("value");
+        int lastProblemNumber = (int) (double) sr.getAggregations().get("lastProblem").getProperty("value");
+        return lastProblemNumber < 0 ? 0 : lastProblemNumber;
     }
 }

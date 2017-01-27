@@ -36,4 +36,10 @@ public class Config {
         return type;
     }
 
+    @Bean(name = "problemURL")
+    public String problemURL(@Value("${euler.problem.url}") String url) { return url; }
+
+    @Bean(name = "problemCssBody")
+    public String problemCssBody(@Value("${euler.problem.css.body}") String problemCssBody) {return problemCssBody; }
+
 }
