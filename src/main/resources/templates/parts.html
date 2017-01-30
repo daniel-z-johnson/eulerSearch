@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)" >
+    <title th:text="${title}"></title>
+</head>
+<body>
+<div th:fragment="search">
+    <form action="/euler" method="get">
+    Search: <input type="text" name="query" placeholder="Query goes here" /><input type="submit" value="Search"/>
+    </form>
+</div>
+
+</body>
+</html>
