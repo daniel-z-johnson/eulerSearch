@@ -24,15 +24,6 @@ public class ProblemController {
     @Autowired
     private ProblemService problemService;
 
-//    @GetMapping(path = {"/", "/index", "/problems"})
-//    public String index(Model model) {
-//        model.addAttribute("title", "Euler Search Page 1");
-//        model.addAttribute("page", 2);
-//        List<Problem> problems = problemService.getAll(0, PROBLEM_PER_PAGE);
-//        model.addAttribute("problems", problems);
-//        return "index";
-//    }
-
     @GetMapping(path = {"/", "/index", "/problems"})
     public String index(Model model,
                         @RequestParam(name = "page", defaultValue = "1") int page) {
