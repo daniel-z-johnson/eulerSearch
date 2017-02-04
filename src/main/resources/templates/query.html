@@ -5,6 +5,6 @@
 <body>
 <div th:replace="parts :: search"></div>
 <div th:replace="parts :: problemTable(${problems})"></div>
-<a th:href="@{/problems(page=${page})}">next</a>
+<a th:href="@{/euler(page=${page},query=${query})}">next</a>
 </body>
 </html>

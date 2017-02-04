@@ -36,11 +36,16 @@ public class ProblemController {
 
     @GetMapping(path = "/euler")
     public String search(Model model,
-                         @RequestParam(name = "query") String searchParam) {
+                         @RequestParam(name = "query") String searchParam,
+                         @RequestParam(name = "page", defaultValue = "1") int page) {
         log.info("search param: {}", searchParam);
-        List<Problem> problems = problemService.getProblemsByQuery(searchParam);
+        List<Problem> problems = problemService.getProblemsByQuery(searchParam,
+                PROBLEM_PER_PAGE * (page - 1),
+                PROBLEM_PER_PAGE);
+        model.addAttribute("title", "Euler query " + searchParam);
+        model.addAttribute("page", page + 1);
         model.addAttribute("query", searchParam);
         model.addAttribute("problems", problems);
-        return "index";
+        return "query";
     }
 }
